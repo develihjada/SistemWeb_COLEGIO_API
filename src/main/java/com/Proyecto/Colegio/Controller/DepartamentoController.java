@@ -4,11 +4,11 @@
  */
 package com.Proyecto.Colegio.Controller;
 
-import com.Proyecto.Colegio.Entity.TipoDocumento;
+import com.Proyecto.Colegio.Entity.Departamento;
 import com.Proyecto.Colegio.Response.ResponseGlobal;
-import com.Proyecto.Colegio.Response.ResponseListaTipoDocumento;
-import com.Proyecto.Colegio.Service.TipoDocumentoService;
-import com.Proyecto.Colegio.dto.TipoDocumentoDTO;
+import com.Proyecto.Colegio.Response.ResponseListaDepartamento;
+import com.Proyecto.Colegio.Service.DepartamentoService;
+import com.Proyecto.Colegio.dto.DepartamentoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +22,17 @@ import org.springframework.http.HttpStatus;
  * @author Claudio Cruzado
  */
 @RestController
-@RequestMapping("/TipoDocumento")
-public class TipoDocumentoController {
+@RequestMapping("/Departamento")
+public class DepartamentoController {
 
     @Autowired
-    private TipoDocumentoService tipoDocumentoService;
+    private DepartamentoService departamentoService;
 
     @GetMapping("/Mostrar")
-    public ResponseEntity<ResponseListaTipoDocumento> listarDocumentos(@RequestParam(defaultValue = "1") int estado) {
+    public ResponseEntity<ResponseListaDepartamento> listarDepartamentos(@RequestParam(defaultValue = "1") int estado) {
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.listar(estado);
-            List<?> dataList = documentos;
+            List<Departamento> departamento = (List<Departamento>) departamentoService.listar(estado);
+            List<?> dataList = departamento;
 
             if (dataList.isEmpty()) {
                 String mensaje;
@@ -48,53 +48,53 @@ public class TipoDocumentoController {
                         mensaje = "No se encontró ningún elemento.";
                         break;
                 }
-                ResponseListaTipoDocumento response = new ResponseListaTipoDocumento(false, mensaje, HttpStatus.NOT_FOUND);
+                ResponseListaDepartamento response = new ResponseListaDepartamento(false, mensaje, HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             } else {
-                String mensaje = "Documentos listados con éxito.";
+                String mensaje = "Departamentos listados con éxito.";
                 @SuppressWarnings("unchecked")
-                List<TipoDocumentoDTO> documentosDTO = (List<TipoDocumentoDTO>) dataList;
+                List<DepartamentoDTO> documentosDTO = (List<DepartamentoDTO>) dataList;
 
-                ResponseListaTipoDocumento response = new ResponseListaTipoDocumento(true, mensaje, HttpStatus.OK, documentosDTO);
+                ResponseListaDepartamento response = new ResponseListaDepartamento(true, mensaje, HttpStatus.OK, documentosDTO);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
         } catch (DataAccessException e) {
             String mensaje = "Error al acceder a la base de datos. Intente más tarde.";
-            ResponseListaTipoDocumento response = new ResponseListaTipoDocumento(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseListaDepartamento response = new ResponseListaDepartamento(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             String mensaje = "Error interno inesperado del servidor.";
-            ResponseListaTipoDocumento response = new ResponseListaTipoDocumento(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseListaDepartamento response = new ResponseListaDepartamento(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/Insertar")
-    public ResponseEntity<ResponseGlobal> crearDocumento(@RequestBody TipoDocumentoDTO dto) {
+    public ResponseEntity<ResponseGlobal> crearDepartamento(@RequestBody DepartamentoDTO dto) {
 
         ResponseGlobal responseGlobal;
 
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(dto.getDescripcion());
-            if (documentos.isEmpty()) {
-                tipoDocumentoService.guardar(dto);
-                String mensaje = "Tipo de Documento insertado correctamente.";
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(dto.getDescripcion());
+            if (departamento.isEmpty()) {
+                departamentoService.guardar(dto);
+                String mensaje = "Departamento insertado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.CREATED);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CREATED);
             } else {
-                String mensaje = "Tipo de Documento ya existe";
+                String mensaje = "Departamento ya existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.CONFLICT);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CONFLICT);
             }
 
         } catch (DataAccessException e) {
-            String mensaje = "Error al acceder a la base de datos. No se pudo insertar Tipo de Documento.";
+            String mensaje = "Error al acceder a la base de datos. No se pudo insertar Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
-            String mensaje = "Error interno inesperado del servidor. No se pudo insertar Tipo de Documento.";
+            String mensaje = "Error interno inesperado del servidor. No se pudo insertar Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -103,49 +103,49 @@ public class TipoDocumentoController {
     @PutMapping("/ActualizarTipo/{id}")
     public ResponseEntity<ResponseGlobal> actualizarDocumento(
             @PathVariable Integer id,
-            @RequestBody TipoDocumentoDTO dto
+            @RequestBody DepartamentoDTO dto
     ) {
         ResponseGlobal responseGlobal;
 
         try {
 
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(dto.getDescripcion());
-            if (documentos.isEmpty()) {
-                tipoDocumentoService.actualizar(id, dto);
-                String mensaje = "Tipo de Documento actualizado correctamente.";
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(dto.getDescripcion());
+            if (departamento.isEmpty()) {
+                departamentoService.actualizar(id, dto);
+                String mensaje = "Departamento actualizado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
-                String mensaje = "Tipo de Documento ya existe";
+                String mensaje = "Departamento ya existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.CONFLICT);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CONFLICT);
             }
 
         } catch (DataAccessException e) {
-            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el Tipo de Documento.";
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
-            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el Tipo de Documento.";
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/ActualizarEstado/{id}")
-    public ResponseEntity<ResponseGlobal> actualizarEstadoDocumento(
+    public ResponseEntity<ResponseGlobal> actualizarEstadoDepartamento(
             @PathVariable Integer id,
             @RequestParam int nuevoEstado,
-            @RequestBody TipoDocumentoDTO dto
+            @RequestBody DepartamentoDTO dto
     ) {
         ResponseGlobal responseGlobal;
 
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existeId(id);
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existeId(id);
 
-            if (!documentos.isEmpty()) {
-                tipoDocumentoService.actualizarEstado(id, nuevoEstado);
+            if (!departamento.isEmpty()) {
+                departamentoService.actualizarEstado(id, nuevoEstado);
                 String estadoTexto;
                 switch (nuevoEstado) {
                     case 1:
@@ -157,24 +157,25 @@ public class TipoDocumentoController {
                     default:
                         estadoTexto = String.valueOf(nuevoEstado);
                 }
-                String mensaje = "Estado del Tipo de Documento ID " + id + " actualizado a " + estadoTexto + " correctamente.";
+                String mensaje = "Estado del Departamento ID " + id + " actualizado a " + estadoTexto + " correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
-                String mensaje = "Id " + id + " Tipo de Documento no existe";
+                String mensaje = "Id " + id + " Departamento no existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.NOT_FOUND);
             }
 
         } catch (DataAccessException e) {
-            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el estado del Tipo de Documento.";
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el estado del Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
-            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado del Tipo de Documento.";
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado del Departamento.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
 }
