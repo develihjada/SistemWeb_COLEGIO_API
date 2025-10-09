@@ -100,7 +100,7 @@ public class TipoDocumentoController {
         }
     }
 
-    @PutMapping("/ActualizarTipo/{id}")
+    @PutMapping("/Actualizar/{id}")
     public ResponseEntity<ResponseGlobal> actualizarDocumento(
             @PathVariable Integer id,
             @RequestBody TipoDocumentoDTO dto
