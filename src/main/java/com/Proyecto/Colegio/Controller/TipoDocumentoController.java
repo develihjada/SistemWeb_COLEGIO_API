@@ -4,6 +4,10 @@
  */
 package com.Proyecto.Colegio.Controller;
 
+import Request.RequestactualizarDocumento;
+import Request.RequestactualizarEstadoDocumento;
+import Request.RequestcrearDocumento;
+import Request.RequestlistarTipoDocumento;
 import com.Proyecto.Colegio.Entity.TipoDocumento;
 import com.Proyecto.Colegio.Response.ResponseGlobal;
 import com.Proyecto.Colegio.Response.ResponseListaTipoDocumento;
@@ -28,15 +32,15 @@ public class TipoDocumentoController {
     @Autowired
     private TipoDocumentoService tipoDocumentoService;
 
-    @GetMapping("/Mostrar")
-    public ResponseEntity<ResponseListaTipoDocumento> listarDocumentos(@RequestParam(defaultValue = "1") int estado) {
+    @PostMapping("/Mostrar")
+    public ResponseEntity<ResponseListaTipoDocumento> listarDocumentos(@RequestBody RequestlistarTipoDocumento requ) {
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.listar(estado);
+            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.listar(requ.getEstado());
             List<?> dataList = documentos;
 
             if (dataList.isEmpty()) {
                 String mensaje;
-                switch (estado) {
+                switch (requ.getEstado()) {
                     case 1:
                         mensaje = "No se encontró ningún elemento activo.";
                         break;
@@ -71,14 +75,14 @@ public class TipoDocumentoController {
     }
 
     @PostMapping("/Insertar")
-    public ResponseEntity<ResponseGlobal> crearDocumento(@RequestBody TipoDocumentoDTO dto) {
+    public ResponseEntity<ResponseGlobal> crearDocumento(@RequestBody RequestcrearDocumento requ) {
 
         ResponseGlobal responseGlobal;
 
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(dto.getDescripcion());
+            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(requ.getDescripcion());
             if (documentos.isEmpty()) {
-                tipoDocumentoService.guardar(dto);
+                tipoDocumentoService.guardar(requ);
                 String mensaje = "Tipo de Documento insertado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.CREATED);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CREATED);
@@ -100,18 +104,17 @@ public class TipoDocumentoController {
         }
     }
 
-    @PutMapping("/Actualizar/{id}")
+    @PutMapping("/Actualizar")
     public ResponseEntity<ResponseGlobal> actualizarDocumento(
-            @PathVariable Integer id,
-            @RequestBody TipoDocumentoDTO dto
+            @RequestBody RequestactualizarDocumento requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
 
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(dto.getDescripcion());
+            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existe(requ.getDescripcion());
             if (documentos.isEmpty()) {
-                tipoDocumentoService.actualizar(id, dto);
+                tipoDocumentoService.actualizar(requ);
                 String mensaje = "Tipo de Documento actualizado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
@@ -134,20 +137,18 @@ public class TipoDocumentoController {
     }
 
     @PutMapping("/ActualizarEstado/{id}")
-    public ResponseEntity<ResponseGlobal> actualizarEstadoDocumento(
-            @PathVariable Integer id,
-            @RequestParam int nuevoEstado,
-            @RequestBody TipoDocumentoDTO dto
+    public ResponseEntity<ResponseGlobal> actualizarEstadoDocumento( 
+            @RequestBody  RequestactualizarEstadoDocumento requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
-            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existeId(id);
+            List<TipoDocumento> documentos = (List<TipoDocumento>) tipoDocumentoService.existeId(requ.getId());
 
             if (!documentos.isEmpty()) {
-                tipoDocumentoService.actualizarEstado(id, nuevoEstado);
+                tipoDocumentoService.actualizarEstado(requ.getId(), requ.getEstado());
                 String estadoTexto;
-                switch (nuevoEstado) {
+                switch (requ.getEstado()) {
                     case 1:
                         estadoTexto = "activo";
                         break;
@@ -155,13 +156,13 @@ public class TipoDocumentoController {
                         estadoTexto = "inactivo";
                         break;
                     default:
-                        estadoTexto = String.valueOf(nuevoEstado);
+                        estadoTexto = String.valueOf(requ.getEstado());
                 }
-                String mensaje = "Estado del Tipo de Documento ID " + id + " actualizado a " + estadoTexto + " correctamente.";
+                String mensaje = "Estado del Tipo de Documento ID " + requ.getId() + " actualizado a " + estadoTexto + " correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
-                String mensaje = "Id " + id + " Tipo de Documento no existe";
+                String mensaje = "Id " + requ.getId() + " Tipo de Documento no existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.NOT_FOUND);
             }

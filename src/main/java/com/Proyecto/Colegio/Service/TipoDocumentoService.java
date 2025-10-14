@@ -4,9 +4,10 @@
  */
 package com.Proyecto.Colegio.Service;
 
+import Request.RequestactualizarDocumento;
+import Request.RequestcrearDocumento;
 import com.Proyecto.Colegio.Entity.TipoDocumento;
 import com.Proyecto.Colegio.Repository.TipoDocumentoRepository;
-import com.Proyecto.Colegio.dto.TipoDocumentoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; 
@@ -36,12 +37,12 @@ public class TipoDocumentoService {
         return tipoDocumentoRepository.existeIdTipoDocumento(id);
     }
 
-    public void guardar(TipoDocumentoDTO dto) {
+    public void guardar(RequestcrearDocumento dto) {
         tipoDocumentoRepository.insertarTipoDocumento(dto.getDescripcion());
     }
 
-    public void actualizar(Integer id, TipoDocumentoDTO dto) {
-        tipoDocumentoRepository.actualizarTipoDocumento(id, dto.getDescripcion());
+    public void actualizar(RequestactualizarDocumento dto) {
+        tipoDocumentoRepository.actualizarTipoDocumento(dto.getId(), dto.getDescripcion());
     }
 
     public void actualizarEstado(Integer id, int nuevoEstado) {

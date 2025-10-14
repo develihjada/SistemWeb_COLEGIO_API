@@ -109,7 +109,7 @@ public class ProvinciaController {
 
     @PutMapping("/Actualizar")
     public ResponseEntity<ResponseGlobal> actualizarProvincia(
-            RequestactualizarProvincia requ
+            @RequestBody RequestactualizarProvincia requ
     ) {
         ResponseGlobal responseGlobal;
 
@@ -141,7 +141,7 @@ public class ProvinciaController {
 
     @PutMapping("/ActualizarEstado")
     public ResponseEntity<ResponseGlobal> actuializarEstadoProvincia(
-            RequestactuializarEstadoProvincia requ
+            @RequestBody RequestactuializarEstadoProvincia requ
     ) {
         ResponseGlobal responseGlobal;
 
