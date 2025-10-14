@@ -4,6 +4,11 @@
  */
 package com.Proyecto.Colegio.Controller;
 
+import Request.RequestactualizarProvincia;
+import Request.RequestactuializarEstadoProvincia;
+import Request.RequestcrearProvincia;
+import Request.RequestlistarProvincias;
+import Request.RequestlistarProvinciasDepartamento;
 import com.Proyecto.Colegio.Entity.Provincia;
 import com.Proyecto.Colegio.Response.ResponseGlobal;
 import com.Proyecto.Colegio.Response.ResponseListaProvincia;
@@ -28,15 +33,15 @@ public class ProvinciaController {
     @Autowired
     private ProvinciaService provinciaService;
 
-    @GetMapping("/Mostrar")
-    public ResponseEntity<ResponseListaProvincia> listarProvincias(@RequestParam(defaultValue = "1") int estado) {
+    @PostMapping("/Mostrar")
+    public ResponseEntity<ResponseListaProvincia> listarProvincias(@RequestBody RequestlistarProvincias requ) {
         try {
-            List<Provincia> provincia = (List<Provincia>) provinciaService.listar(estado);
+            List<Provincia> provincia = (List<Provincia>) provinciaService.listar(requ.getEstado());
             List<?> dataList = provincia;
 
             if (dataList.isEmpty()) {
                 String mensaje;
-                switch (estado) {
+                switch (requ.getEstado()) {
                     case 1:
                         mensaje = "No se encontró ningún elemento activo.";
                         break;
@@ -73,14 +78,14 @@ public class ProvinciaController {
     
 
     @PostMapping("/Insertar")
-    public ResponseEntity<ResponseGlobal> crearDepartamento(@RequestBody ProvinciaDTO dto) {
+    public ResponseEntity<ResponseGlobal> crearProvincia(@RequestBody RequestcrearProvincia requ) {
 
         ResponseGlobal responseGlobal;
 
         try {
-            List<Provincia> provincia = (List<Provincia>) provinciaService.existe(dto.getDescripcion());
+            List<Provincia> provincia = (List<Provincia>) provinciaService.existe(requ.getDescripcion());
             if (provincia.isEmpty()) {
-                provinciaService.guardar(dto);
+                provinciaService.guardar(requ);
                 String mensaje = "Provincia insertado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.CREATED);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CREATED);
@@ -102,18 +107,17 @@ public class ProvinciaController {
         }
     }
 
-    @PutMapping("/Actualizar/{id}")
-    public ResponseEntity<ResponseGlobal> actualizarDocumento(
-            @PathVariable Integer id,
-            @RequestBody ProvinciaDTO dto
+    @PutMapping("/Actualizar")
+    public ResponseEntity<ResponseGlobal> actualizarProvincia(
+            RequestactualizarProvincia requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
 
-            List<Provincia> provincia = (List<Provincia>) provinciaService.existe(dto.getDescripcion());
+            List<Provincia> provincia = (List<Provincia>) provinciaService.existe(requ.getDescripcion());
             if (provincia.isEmpty()) {
-                provinciaService.actualizar(id, dto);
+                provinciaService.actualizar(requ);
                 String mensaje = "Provincia actualizado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
@@ -135,21 +139,19 @@ public class ProvinciaController {
         }
     }
 
-    @PutMapping("/ActualizarEstado/{id}")
+    @PutMapping("/ActualizarEstado")
     public ResponseEntity<ResponseGlobal> actuializarEstadoProvincia(
-            @PathVariable Integer id,
-            @RequestParam int nuevoEstado,
-            @RequestBody ProvinciaDTO dto
+            RequestactuializarEstadoProvincia requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
-            List<Provincia> provincia = (List<Provincia>) provinciaService.existeId(id);
+            List<Provincia> provincia = (List<Provincia>) provinciaService.existeId(requ.getId());
 
             if (!provincia.isEmpty()) {
-                provinciaService.actualizarEstado(id, nuevoEstado);
+                provinciaService.actualizarEstado(requ);
                 String estadoTexto;
-                switch (nuevoEstado) {
+                switch (requ.getEstado()) {
                     case 1:
                         estadoTexto = "activo";
                         break;
@@ -157,13 +159,13 @@ public class ProvinciaController {
                         estadoTexto = "inactivo";
                         break;
                     default:
-                        estadoTexto = String.valueOf(nuevoEstado);
+                        estadoTexto = String.valueOf(requ.getEstado());
                 }
-                String mensaje = "Estado de la Provincia ID " + id + " actualizado a " + estadoTexto + " correctamente.";
+                String mensaje = "Estado de la Provincia ID " + requ.getId()  + " actualizado a " + estadoTexto + " correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
-                String mensaje = "Id " + id + " Provincia no existe";
+                String mensaje = "Id " + requ.getId() + " Provincia no existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.NOT_FOUND);
             }
@@ -177,6 +179,36 @@ public class ProvinciaController {
             String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado de la Provincia.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PostMapping("/MostrarProvinciasDepartamento")
+    public ResponseEntity<ResponseListaProvincia> listarProvinciasDepartamento(@RequestBody RequestlistarProvinciasDepartamento requ) {
+        try {
+            List<Provincia> provincia = (List<Provincia>) provinciaService.listarProvinciasDepartamento(requ.getIddepartamento());
+            List<?> dataList = provincia;
+
+            if (dataList.isEmpty()) {
+                String mensaje = "No se encontró ningún elemento.";
+                ResponseListaProvincia response = new ResponseListaProvincia(false, mensaje, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            } else {
+                String mensaje = "Provincias listadas con éxito.";
+                @SuppressWarnings("unchecked")
+                List<ProvinciaDTO> provinciaDTO = (List<ProvinciaDTO>) dataList;
+
+                ResponseListaProvincia response = new ResponseListaProvincia(true, mensaje, HttpStatus.OK, provinciaDTO);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        } catch (DataAccessException e) {
+            String mensaje = "Error al acceder a la base de datos. Intente más tarde.";
+            ResponseListaProvincia response = new ResponseListaProvincia(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (Exception e) {
+            String mensaje = "Error interno inesperado del servidor.";
+            ResponseListaProvincia response = new ResponseListaProvincia(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

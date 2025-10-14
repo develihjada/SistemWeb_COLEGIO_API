@@ -4,7 +4,6 @@
  */
 package com.Proyecto.Colegio.Repository;
 
-
 import com.Proyecto.Colegio.Entity.Provincia;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -22,10 +21,10 @@ public interface ProvinciaRepository extends JpaRepository<Provincia, Integer> {
 
     @Procedure(name = "MostrarProvincia")
     List<Provincia> mostrarProvincia(@Param("estado") int estado);
-    
+
     @Procedure(name = "ExisteProvincia")
     List<Provincia> existeProvincia(@Param("descripcion") String descripcion);
-    
+
     @Procedure(name = "ExisteIdProvincia")
     List<Provincia> existeIdProvincia(@Param("id") int id);
 
@@ -37,6 +36,8 @@ public interface ProvinciaRepository extends JpaRepository<Provincia, Integer> {
 
     @Procedure(name = "ActualizarEstadoProvincia")
     void actualizarEstadoProvincia(@Param("id") Integer id, @Param("estado") int estado);
-    
-}
 
+    @Procedure(name = "ListarProvinciasDepartamento")
+    List<Provincia> listarProvinciasDepartamento(@Param("iddepartamento") int iddepartamento);
+
+}

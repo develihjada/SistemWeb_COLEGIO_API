@@ -5,6 +5,9 @@
 package com.Proyecto.Colegio.Service;
 
 
+import Request.RequestactualizarProvincia;
+import Request.RequestactuializarEstadoProvincia;
+import Request.RequestcrearProvincia;
 import com.Proyecto.Colegio.Entity.Provincia;
 import com.Proyecto.Colegio.Repository.ProvinciaRepository;
 import com.Proyecto.Colegio.dto.ProvinciaDTO;
@@ -37,16 +40,19 @@ public class ProvinciaService {
         return provinciaRepository.existeIdProvincia(id);
     }
 
-    public void guardar(ProvinciaDTO dto) {
+    public void guardar(RequestcrearProvincia dto) {
         provinciaRepository.insertarProvincia(dto.getDescripcion(), dto.getIdDepartamento());
     }
 
-    public void actualizar(Integer id, ProvinciaDTO dto) {
-        provinciaRepository.actualizarProvincia(id, dto.getDescripcion(), dto.getIdDepartamento());
+    public void actualizar(RequestactualizarProvincia dto) {
+        provinciaRepository.actualizarProvincia(dto.getId(), dto.getDescripcion(), dto.getIdDepartamento());
     }
 
-    public void actualizarEstado(Integer id, int nuevoEstado) {
-        provinciaRepository.actualizarEstadoProvincia(id, nuevoEstado);
+    public void actualizarEstado(RequestactuializarEstadoProvincia dto) {
+        provinciaRepository.actualizarEstadoProvincia(dto.getId(), dto.getEstado());
     }
     
+    public List<Provincia> listarProvinciasDepartamento(Integer iddepartamento) {
+        return provinciaRepository.listarProvinciasDepartamento(iddepartamento);
+    }    
 }
