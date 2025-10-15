@@ -9,13 +9,12 @@ import Request.RequestactualizarProvincia;
 import Request.RequestactuializarEstadoProvincia;
 import Request.RequestcrearProvincia;
 import com.Proyecto.Colegio.Entity.Provincia;
-import com.Proyecto.Colegio.Repository.ProvinciaRepository;
-import com.Proyecto.Colegio.dto.ProvinciaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; 
 
 import java.util.List;
+import com.Proyecto.Colegio.Repository.ProvinciaRepository;
 /**
  *
  * @author Claudio Cruzado

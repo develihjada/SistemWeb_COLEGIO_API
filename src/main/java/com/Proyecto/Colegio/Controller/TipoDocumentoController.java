@@ -136,7 +136,7 @@ public class TipoDocumentoController {
         }
     }
 
-    @PutMapping("/ActualizarEstado/{id}")
+    @PutMapping("/ActualizarEstado")
     public ResponseEntity<ResponseGlobal> actualizarEstadoDocumento( 
             @RequestBody  RequestactualizarEstadoDocumento requ
     ) {
