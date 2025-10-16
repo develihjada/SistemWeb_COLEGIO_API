@@ -30,12 +30,12 @@ public interface ParentezcoRepository extends JpaRepository<Parentezco, Integer>
     List<Parentezco> existeIdParentezco(@Param("id") int id);
 
     @Procedure(name = "InsertarParentezco")
-    void insertarTipoParentezco(@Param("descripcion") String descripcion);
+    void insertarParentezco(@Param("descripcion") String descripcion);
 
     @Procedure(name = "ActualizarParentezco")
     void actualizarParentezco(@Param("id") Integer id, @Param("descripcion") String descripcion);
 
     @Procedure(name = "AtualizarEstadoParentezco")
-    void actualizarEstadoParentezco(@Param("id") Integer id, @Param("estado") int estado);
+    void atualizarEstadoParentezco(@Param("id") Integer id, @Param("estado") int estado);
     
 }

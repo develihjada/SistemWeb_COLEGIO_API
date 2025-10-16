@@ -38,7 +38,7 @@ public class ParentezcoService {
     }
 
     public void guardar(RequestcrearParentezco dto) {
-        parentezcoRepository.insertarTipoParentezco(dto.getDescripcion());
+        parentezcoRepository.insertarParentezco(dto.getDescripcion());
     }
 
     public void actualizar(RequestactualizarParentezco dto) {
@@ -46,7 +46,7 @@ public class ParentezcoService {
     }
 
     public void actualizarEstado(Integer id, int nuevoEstado) {
-        parentezcoRepository.actualizarEstadoParentezco(id, nuevoEstado);
+        parentezcoRepository.atualizarEstadoParentezco(id, nuevoEstado);
     }
     
 }
