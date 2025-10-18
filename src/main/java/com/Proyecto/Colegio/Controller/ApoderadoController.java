@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
  */
 @RestController
 @RequestMapping("/Apoderado")
+@CrossOrigin(origins="*")
 public class ApoderadoController {
 
     @Autowired
