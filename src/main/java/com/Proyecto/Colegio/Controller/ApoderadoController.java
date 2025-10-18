@@ -4,6 +4,8 @@
  */
 package com.Proyecto.Colegio.Controller;
 
+import Request.RequestactualizarApoderado;
+import Request.RequestactuializarEstadoApoderado;
 import Request.RequestbuscarApoderado;
 import Request.RequestcrearApoderado;
 import Request.RequestlistarApoderado;
@@ -124,6 +126,81 @@ public class ApoderadoController {
 
         } catch (Exception e) {
             String mensaje = "Error interno inesperado del servidor. No se pudo insertar Apoderado.";
+            responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PutMapping("/Actualizar")
+    public ResponseEntity<ResponseGlobal> actualizarApoderado(
+            @RequestBody RequestactualizarApoderado requ
+    ) {
+        ResponseGlobal responseGlobal;
+
+        try {
+
+            List<Apoderado> apoderado = (List<Apoderado>) apoderadoService.existeapoderado(requ.getNdocumento());
+            if (apoderado.isEmpty()) {
+                apoderadoService.actualizar(requ);
+                String mensaje = "Apoderado actualizado correctamente.";
+                responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
+                return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
+            } else {
+                String mensaje = "Apoderado ya existe";
+                responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.CONFLICT);
+                return new ResponseEntity<>(responseGlobal, HttpStatus.CONFLICT);
+            }
+
+        } catch (DataAccessException e) {
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar Apoderado.";
+            responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (Exception e) {
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar Apoderado.";
+            responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PutMapping("/ActualizarEstado")
+    public ResponseEntity<ResponseGlobal> actuializarEstadoApoderado(
+            @RequestBody RequestactuializarEstadoApoderado requ
+    ) {
+        ResponseGlobal responseGlobal;
+
+        try {
+            List<Apoderado> apoderado = (List<Apoderado>) apoderadoService.existeId(requ.getId());
+
+            if (!apoderado.isEmpty()) {
+                apoderadoService.actualizarEstado(requ);
+                String estadoTexto;
+                switch (requ.getEstado()) {
+                    case 1:
+                        estadoTexto = "activo";
+                        break;
+                    case 0:
+                        estadoTexto = "inactivo";
+                        break;
+                    default:
+                        estadoTexto = String.valueOf(requ.getEstado());
+                }
+                String mensaje = "Estado del Apoderado ID " + requ.getId()  + " actualizado a " + estadoTexto + " correctamente.";
+                responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
+                return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
+            } else {
+                String mensaje = "Id " + requ.getId() + " Apoderado no existe";
+                responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(responseGlobal, HttpStatus.NOT_FOUND);
+            }
+
+        } catch (DataAccessException e) {
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el estado del Apoderado.";
+            responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (Exception e) {
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado del Apoderado.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }

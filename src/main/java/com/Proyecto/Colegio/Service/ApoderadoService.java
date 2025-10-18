@@ -4,6 +4,8 @@
  */
 package com.Proyecto.Colegio.Service;
 
+import Request.RequestactualizarApoderado;
+import Request.RequestactuializarEstadoApoderado;
 import Request.RequestcrearApoderado;
 import com.Proyecto.Colegio.Entity.Apoderado;
 import com.Proyecto.Colegio.Repository.ApoderadoRepository;
@@ -52,6 +54,23 @@ public class ApoderadoService {
                                                   dto.getTelefono(),
                                                   dto.getEmail(),
                                                   dto.getIdParentezco());
+    }
+    
+    public void actualizar(RequestactualizarApoderado dto) {
+        apoderadoRepository.actualizarApoderado(dto.getId(),
+                                                  dto.getNombres(), 
+                                                  dto.getApellidos(),
+                                                  dto.getIdtipodocumento(),
+                                                  dto.getNdocumento(),
+                                                  dto.getDireccion(),
+                                                  dto.getIddistrito(),
+                                                  dto.getTelefono(),
+                                                  dto.getEmail(),
+                                                  dto.getIdParentezco());
+    }
+    
+    public void actualizarEstado(RequestactuializarEstadoApoderado dto) {
+       apoderadoRepository.actualizarEstadoApoderado(dto.getId(), dto.getEstado());
     }
 
     

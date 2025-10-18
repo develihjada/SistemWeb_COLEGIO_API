@@ -4,6 +4,8 @@
  */
 package com.Proyecto.Colegio.Service;
 
+import Request.RequestactualizarDepartamento;
+import Request.RequestcrearDepartamento;
 import com.Proyecto.Colegio.Entity.Departamento;
 import com.Proyecto.Colegio.Repository.DepartamentoRepository;
 import com.Proyecto.Colegio.dto.DepartamentoDTO;
@@ -36,12 +38,12 @@ public class DepartamentoService {
         return departamentoRepository.existeIdDepartamento(id);
     }
 
-    public void guardar(DepartamentoDTO dto) {
+    public void guardar(RequestcrearDepartamento dto) {
         departamentoRepository.insertarDepartamento(dto.getDescripcion());
     }
 
-    public void actualizar(Integer id, DepartamentoDTO dto) {
-        departamentoRepository.actualizarDepartamento(id, dto.getDescripcion());
+    public void actualizar(RequestactualizarDepartamento requ) {
+        departamentoRepository.actualizarDepartamento(requ.getId(), requ.getDescripcion());
     }
 
     public void actualizarEstado(Integer id, int nuevoEstado) {

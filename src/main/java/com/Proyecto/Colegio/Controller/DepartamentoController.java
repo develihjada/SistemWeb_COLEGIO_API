@@ -4,6 +4,11 @@
  */
 package com.Proyecto.Colegio.Controller;
 
+import Request.RequestactualizarDepartamento;
+import Request.RequestactuializarEstadoDepartamento;
+import Request.RequestactuializarEstadoDistrito;
+import Request.RequestcrearDepartamento;
+import Request.RequestlistarDepartamento;
 import com.Proyecto.Colegio.Entity.Departamento;
 import com.Proyecto.Colegio.Response.ResponseGlobal;
 import com.Proyecto.Colegio.Response.ResponseListaDepartamento;
@@ -28,15 +33,15 @@ public class DepartamentoController {
     @Autowired
     private DepartamentoService departamentoService;
 
-    @GetMapping("/Mostrar")
-    public ResponseEntity<ResponseListaDepartamento> listarDepartamentos(@RequestParam(defaultValue = "1") int estado) {
+    @PostMapping("/Mostrar")
+    public ResponseEntity<ResponseListaDepartamento> listarDepartamentos(@RequestBody RequestlistarDepartamento requ){
         try {
-            List<Departamento> departamento = (List<Departamento>) departamentoService.listar(estado);
+            List<Departamento> departamento = (List<Departamento>) departamentoService.listar(requ.getEstado());
             List<?> dataList = departamento;
 
             if (dataList.isEmpty()) {
                 String mensaje;
-                switch (estado) {
+                switch (requ.getEstado()) {
                     case 1:
                         mensaje = "No se encontró ningún elemento activo.";
                         break;
@@ -71,14 +76,14 @@ public class DepartamentoController {
     }
 
     @PostMapping("/Insertar")
-    public ResponseEntity<ResponseGlobal> crearDepartamento(@RequestBody DepartamentoDTO dto) {
+    public ResponseEntity<ResponseGlobal> crearDepartamento(@RequestBody RequestcrearDepartamento requ) {
 
         ResponseGlobal responseGlobal;
 
         try {
-            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(dto.getDescripcion());
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(requ.getDescripcion());
             if (departamento.isEmpty()) {
-                departamentoService.guardar(dto);
+                departamentoService.guardar(requ);
                 String mensaje = "Departamento insertado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.CREATED);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CREATED);
@@ -100,18 +105,17 @@ public class DepartamentoController {
         }
     }
 
-    @PutMapping("/Actualizar/{id}")
+    @PutMapping("/Actualizar")
     public ResponseEntity<ResponseGlobal> actualizarDocumento(
-            @PathVariable Integer id,
-            @RequestBody DepartamentoDTO dto
+            @RequestBody RequestactualizarDepartamento requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
 
-            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(dto.getDescripcion());
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existe(requ.getDescripcion());
             if (departamento.isEmpty()) {
-                departamentoService.actualizar(id, dto);
+                departamentoService.actualizar(requ);
                 String mensaje = "Departamento actualizado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
@@ -133,21 +137,19 @@ public class DepartamentoController {
         }
     }
 
-    @PutMapping("/ActualizarEstado/{id}")
+    @PutMapping("/ActualizarEstado")
     public ResponseEntity<ResponseGlobal> actualizarEstadoDepartamento(
-            @PathVariable Integer id,
-            @RequestParam int nuevoEstado,
-            @RequestBody DepartamentoDTO dto
+            @RequestBody RequestactuializarEstadoDepartamento requ
     ) {
         ResponseGlobal responseGlobal;
 
         try {
-            List<Departamento> departamento = (List<Departamento>) departamentoService.existeId(id);
+            List<Departamento> departamento = (List<Departamento>) departamentoService.existeId(requ.getId());
 
             if (!departamento.isEmpty()) {
-                departamentoService.actualizarEstado(id, nuevoEstado);
+                departamentoService.actualizarEstado(requ.getId(), requ.getEstado());
                 String estadoTexto;
-                switch (nuevoEstado) {
+                switch (requ.getEstado()) {
                     case 1:
                         estadoTexto = "activo";
                         break;
@@ -155,13 +157,13 @@ public class DepartamentoController {
                         estadoTexto = "inactivo";
                         break;
                     default:
-                        estadoTexto = String.valueOf(nuevoEstado);
+                        estadoTexto = String.valueOf(requ.getEstado());
                 }
-                String mensaje = "Estado del Departamento ID " + id + " actualizado a " + estadoTexto + " correctamente.";
+                String mensaje = "Estado del Departamento ID " + requ.getId() + " actualizado a " + estadoTexto + " correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
-                String mensaje = "Id " + id + " Departamento no existe";
+                String mensaje = "Id " + requ.getId() + " Departamento no existe";
                 responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.NOT_FOUND);
             }

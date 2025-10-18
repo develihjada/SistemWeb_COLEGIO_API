@@ -108,7 +108,7 @@ public class DistritoController {
     }
 
     @PutMapping("/Actualizar")
-    public ResponseEntity<ResponseGlobal> actualizarProvincia(
+    public ResponseEntity<ResponseGlobal> actualizarDistrito(
             @RequestBody RequestactualizarDistrito requ
     ) {
         ResponseGlobal responseGlobal;
@@ -128,19 +128,19 @@ public class DistritoController {
             }
 
         } catch (DataAccessException e) {
-            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar la Distrito.";
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el Distrito.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
-            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar la Distrito.";
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el Distrito.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping("/ActualizarEstado")
-    public ResponseEntity<ResponseGlobal> actuializarEstadoProvincia(
+    public ResponseEntity<ResponseGlobal> actuializarEstadoDistrito(
             @RequestBody RequestactuializarEstadoDistrito requ
     ) {
         ResponseGlobal responseGlobal;
@@ -161,7 +161,7 @@ public class DistritoController {
                     default:
                         estadoTexto = String.valueOf(requ.getEstado());
                 }
-                String mensaje = "Estado de la Distrito ID " + requ.getId()  + " actualizado a " + estadoTexto + " correctamente.";
+                String mensaje = "Estado del Distrito ID " + requ.getId()  + " actualizado a " + estadoTexto + " correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.OK);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
             } else {
@@ -171,19 +171,19 @@ public class DistritoController {
             }
 
         } catch (DataAccessException e) {
-            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el estado de la Distrito.";
+            String mensaje = "Error al acceder a la base de datos. No se pudo actualizar el estado del Distrito.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
-            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado de la Distrito.";
+            String mensaje = "Error interno inesperado del servidor. No se pudo actualizar el estado del Distrito.";
             responseGlobal = new ResponseGlobal(false, mensaje, HttpStatus.INTERNAL_SERVER_ERROR);
             return new ResponseEntity<>(responseGlobal, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     @PostMapping("/MostrarDistritoProvincias")
-    public ResponseEntity<ResponseListaDistrito> listarProvinciasDepartamento(@RequestBody RequestlistarProvinciasDepartamento requ) {
+    public ResponseEntity<ResponseListaDistrito> listarDistritoProvincia(@RequestBody RequestlistarProvinciasDepartamento requ) {
         try {
             List<Distrito> distrito = (List<Distrito>) distritoService.listarProvinciasDepartamento(requ.getIddepartamento());
             List<?> dataList = distrito;
