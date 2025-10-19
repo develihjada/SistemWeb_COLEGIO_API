@@ -27,7 +27,8 @@ public interface ApoderadoRepository extends JpaRepository<Apoderado, Integer> {
     List<ApoderadoListarDTO> buscarApoderado(@Param("ndocumento") String ndocumento);
 
     @Procedure(name = "ExistApoderado")
-    List<Apoderado> existeApoderado(@Param("ndocumento") String ndocumento);
+    List<Apoderado> existeApoderado(@Param("ndocumento") String ndocumento,
+            @Param("id") Integer id);
 
     @Procedure(name = "ExisteIdApoderado")
     List<Apoderado> existeIdApoderado(@Param("id") int id);

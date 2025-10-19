@@ -10,6 +10,7 @@ import Request.RequestbuscarApoderado;
 import Request.RequestcrearApoderado;
 import Request.RequestlistarApoderado;
 import com.Proyecto.Colegio.Entity.Apoderado;
+import com.Proyecto.Colegio.EventPublisher.ApoderadoEventPublisher;
 import com.Proyecto.Colegio.Response.ResponseGlobal;
 import com.Proyecto.Colegio.Response.ResponseListaApoderado;
 import com.Proyecto.Colegio.Service.ApoderadoService;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 /**
  *
@@ -33,6 +36,11 @@ public class ApoderadoController {
 
     @Autowired
     private ApoderadoService apoderadoService;
+    @Autowired
+    private ApoderadoEventPublisher publisher;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
 
     @PostMapping("/Mostrar")
     public ResponseEntity<ResponseListaApoderado> listarApoderados(@RequestBody RequestlistarApoderado requ) {
@@ -108,9 +116,12 @@ public class ApoderadoController {
         ResponseGlobal responseGlobal;
 
         try {
-            List<Apoderado> apoderados = (List<Apoderado>) apoderadoService.existeapoderado(requ.getNdocumento());
+            Integer id = null;
+            List<Apoderado> apoderados = (List<Apoderado>) apoderadoService.existeapoderado(requ.getNdocumento(), id);
             if (apoderados.isEmpty()) {
-                apoderadoService.guardar(requ);
+                apoderadoService.guardar(requ);  
+                messagingTemplate.convertAndSend("/topic/apoderados", requ);
+
                 String mensaje = "Apoderado insertado correctamente.";
                 responseGlobal = new ResponseGlobal(true, mensaje, HttpStatus.CREATED);
                 return new ResponseEntity<>(responseGlobal, HttpStatus.CREATED);
@@ -140,7 +151,7 @@ public class ApoderadoController {
 
         try {
 
-            List<Apoderado> apoderado = (List<Apoderado>) apoderadoService.existeapoderado(requ.getNdocumento());
+            List<Apoderado> apoderado = (List<Apoderado>) apoderadoService.existeapoderado(requ.getNdocumento(), requ.getId());
             if (apoderado.isEmpty()) {
                 apoderadoService.actualizar(requ);
                 String mensaje = "Apoderado actualizado correctamente.";
